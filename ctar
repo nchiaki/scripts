@@ -1,0 +1,44 @@
+#!/bin/sh
+usage()
+{
+	echo $0 \<fromDIR\> \<toDIR\> \<pathOrFileName\> \.\.\.
+	exit
+}
+#
+null=/dev/null
+#
+if expr $# \<= 2 > $null
+then usage
+fi
+pcnt=0
+for prm in $@
+do
+	if expr $pcnt == 0 > $null
+	then src=$prm
+	elif expr $pcnt == 1 > $null
+	then dst=$prm
+	else item="$item $prm"
+	fi
+	pcnt=`expr $pcnt + 1`
+done
+
+srcstat=`mktemp`
+dststat=`mktemp`
+if ! stat $src > $srcstat
+then rm $srcstat $dststat; usage
+fi
+if ! stat $dst > $dststat
+then rm $srcstat $dststat; usage
+fi
+srcind=`grep Inode $srcstat | awk '{ print $4;}'`
+dstind=`grep Inode $dststat | awk '{ print $4;}'`
+rm $srcstat $dststat
+
+if expr $srcind == $dstind > $null
+then echo from and to is same.; exit
+fi
+echo src $src dst $dst : $item
+(cd $src; tar cvzf - $item)|(cd $dst; tar xzvf -)
+
+
+

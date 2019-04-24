@@ -1,0 +1,38 @@
+#!/bin/sh
+#
+usage()
+{
+	echo Usage:
+	echo $0 \[-r\] \<file\> \.\.\.
+	echo
+	echo 行終端 CRLFを LFにする
+	echo -r: 行終端 LFを CRLFにする
+	exit
+}
+#
+null=/dev/null
+#
+if expr $# == 0 > $null
+then usage
+fi
+rvrs=0
+tmpf=`mktemp`
+for fnm in $@
+do
+	if expr "$fnm" == "-r" > $null
+	then rvrs=1; continue
+	fi
+	if expr $rvrs == 0 > $null
+	then {
+		if sed -e "s/\r//g" $fnm > $tmpf
+		then mv $tmpf $fnm
+		fi
+	}
+	else {
+		if sed -e "s/.*/&\r/" $fnm > $tmpf
+		then mv $tmpf $fnm
+		fi
+	}
+	fi
+done
+
