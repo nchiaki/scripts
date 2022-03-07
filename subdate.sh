@@ -25,6 +25,17 @@ do {
   }
   fi
 } done
+tmtmp=${tmstr[0]}
+tmtmp=(${tmtmp//時/:})
+tmtmp=(${tmtmp//分/:})
+tmtmp=(${tmtmp//秒/:})
+tmstr[0]=$tmtmp
+tmtmp=${tmstr[1]}
+tmtmp=(${tmtmp//時/:})
+tmtmp=(${tmtmp//分/:})
+tmtmp=(${tmtmp//秒/:})
+tmstr[1]=$tmtmp
+
 #echo ${tmstr[0]} - ${tmstr[1]}
 strtm=(${tmstr[1]//:/ })
 endtm=(${tmstr[0]//:/ })
